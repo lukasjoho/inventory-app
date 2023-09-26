@@ -1,13 +1,14 @@
-import "./globals.css";
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import Providers from "./providers";
+import './globals.css';
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import Providers from './providers';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "Inventory App",
-  description: "Manage inventory with ease.",
+  title: 'Inventory App',
+  description: 'Manage inventory with ease.',
+  viewport: 'width=device-width, initial-scale=1, user-scalable=no',
 };
 
 export default function RootLayout({

@@ -1,6 +1,6 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import {
@@ -45,7 +45,6 @@ interface ProductFormProps {
 }
 
 const ProductForm = ({ product }: ProductFormProps) => {
-  const firstInputElementRef = useRef<HTMLInputElement>(null);
   const { hide } = useModal();
   const { name, description, price, stock, isDeal, imageUrl, categoryId } =
     product ?? {};
@@ -93,12 +92,6 @@ const ProductForm = ({ product }: ProductFormProps) => {
     return;
   };
 
-  useEffect(() => {
-    console.log('FIRST INPUT: ', firstInputElementRef);
-    if (firstInputElementRef.current) {
-      firstInputElementRef.current.focus();
-    }
-  }, [firstInputElementRef.current]);
   return (
     <Form {...form}>
       <Modal as="form" onSubmit={form.handleSubmit(onSubmit)}>
@@ -114,11 +107,7 @@ const ProductForm = ({ product }: ProductFormProps) => {
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Enter name..."
-                      {...field}
-                      ref={firstInputElementRef}
-                    />
+                    <Input placeholder="Enter name..." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
