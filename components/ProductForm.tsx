@@ -86,7 +86,11 @@ const ProductForm = ({ product }: ProductFormProps) => {
   }
 
   const getRandomImageUrl = () => {
-    const randomImageUrl = faker.image.urlLoremFlickr({ category: 'product' });
+    const randomImageUrl = faker.image.urlLoremFlickr({
+      category: 'product',
+      width: 400,
+      height: 400,
+    });
 
     form.setValue('imageUrl', randomImageUrl);
     return;
@@ -98,87 +102,89 @@ const ProductForm = ({ product }: ProductFormProps) => {
         <ModalHeader>
           <ModalTitle>{product ? 'Edit product' : 'Create product'}</ModalTitle>
         </ModalHeader>
-        <ModalContent className="space-y-6">
-          <div className="flex gap-6">
+        <ModalContent className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter name..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="categoryId"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col justify-between">
+                    <FormLabel>Category</FormLabel>
+                    <FormControl>
+                      <CategoryComboBox
+                        value={field.value}
+                        // @ts-ignore
+                        setValue={form.setValue}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={form.control}
-              name="name"
+              name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter name..." {...field} />
+                    <Textarea placeholder="Enter description...." {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="categoryId"
-              render={({ field }) => (
-                <FormItem className="flex grow flex-col justify-between">
-                  <FormLabel>Category</FormLabel>
-                  <FormControl>
-                    <CategoryComboBox
-                      value={field.value}
-                      // @ts-ignore
-                      setValue={form.setValue}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Textarea placeholder="Enter description...." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="flex gap-6">
-            <FormField
-              control={form.control}
-              name="price"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Price</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Enter price..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="stock"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Stock</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Enter stock..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem className="grow">
+                    <FormLabel>Price</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="Enter price..."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="stock"
+                render={({ field }) => (
+                  <FormItem className="grow">
+                    <FormLabel>Stock</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="Enter stock..."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
           <FormField
             control={form.control}

@@ -55,7 +55,7 @@ const ProductsTable = ({ products }: ProductsTableProps) => {
   const { ref, inView, entry } = useInView({
     /* Optional options */
     threshold: 0,
-    rootMargin: '0px 0px 100px 0px',
+    rootMargin: '0px 0px 200px 0px',
   });
 
   useEffect(() => {
@@ -99,7 +99,7 @@ const ProductsTable = ({ products }: ProductsTableProps) => {
                   {name}
                 </TableCell>
                 <TableCell className="font-medium">
-                  <div className="relative grid aspect-square h-12 w-12 place-items-center overflow-hidden">
+                  <div className="relative grid aspect-square h-12 w-12 place-items-center overflow-hidden rounded-md">
                     {imageUrl ? (
                       <Image src={imageUrl} alt="" fill objectFit="contain" />
                     ) : (
@@ -127,7 +127,7 @@ const ProductsTable = ({ products }: ProductsTableProps) => {
           })}
         </TableBody>
       </Table>
-      {!isEnd && (
+      {!isEnd && renderedProducts.length >= 25 && (
         <div ref={ref} className="flex w-full flex-col gap-4 p-4">
           <Skeleton className="h-[80px] w-full rounded-md" />
           <Skeleton className="h-[80px] w-full rounded-md" />

@@ -23,7 +23,11 @@ export async function GET() {
           price: randomPrice,
           stock: randomStock,
           description: faker.commerce.productDescription(),
-          imageUrl: faker.image.urlLoremFlickr({ category: 'product' }),
+          imageUrl: faker.image.urlLoremFlickr({
+            category: 'product',
+            width: 400,
+            height: 400,
+          }),
           category: {
             connectOrCreate: {
               where: {
