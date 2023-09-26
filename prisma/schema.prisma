@@ -1,0 +1,34 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DB_URL") // uses connection pooling
+//   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model Product {
+  id        String     @default(cuid()) @id
+  name     String      @unique
+  description String?
+  price     Int
+  stock     Int        @default(0)
+  category  Category?  @relation(fields: [categoryId], references: [id])
+  categoryId String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  imageUrl  String?
+  isDeal Boolean @default(false)
+}
+
+model Category {
+  id        String     @default(cuid()) @id
+  name      String
+  products  Product[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
