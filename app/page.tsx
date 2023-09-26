@@ -11,7 +11,7 @@ export default async function Home({ searchParams }: { searchParams: any }) {
   return (
     <Container className="space-y-8 py-8">
       <h1 className="text-2xl font-semibold">Inventory App</h1>
-      <div className="flex justify-between gap-8">
+      <div className="flex flex-col justify-between gap-2 md:flex-row md:gap-8">
         <SearchInput />
         <CreateProductButton />
       </div>

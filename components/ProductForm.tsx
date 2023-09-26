@@ -6,7 +6,6 @@ import { z } from 'zod';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,7 +18,14 @@ import FileInput from './form/FileInput';
 import { createProduct, deleteProduct, updateProduct } from '@/lib/actions';
 import toast from 'react-hot-toast';
 import { Prisma } from '@prisma/client';
-import { useModal } from './modal';
+import {
+  Modal,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalTitle,
+  useModal,
+} from './modal';
 import { CategoryComboBox } from './form/CategoryComboBox';
 import { faker } from '@faker-js/faker';
 import { Loader2, Sparkles } from 'lucide-react';
@@ -55,6 +61,8 @@ const ProductForm = ({ product }: ProductFormProps) => {
     },
   });
 
+  const { isSubmitting } = form.formState;
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const nullifiedValues: any = {};
     Object.keys(values).forEach((key) => {
@@ -85,135 +93,164 @@ const ProductForm = ({ product }: ProductFormProps) => {
   };
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="flex gap-6">
+      <Modal as="form" onSubmit={form.handleSubmit(onSubmit)}>
+        <ModalHeader>
+          <ModalTitle>{product ? 'Edit product' : 'Create product'}</ModalTitle>
+        </ModalHeader>
+        <ModalContent className="space-y-6">
+          <div className="flex gap-6">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter name..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="categoryId"
+              render={({ field }) => (
+                <FormItem className="flex grow flex-col justify-between">
+                  <FormLabel>Category</FormLabel>
+                  <FormControl>
+                    <CategoryComboBox
+                      value={field.value}
+                      // @ts-ignore
+                      setValue={form.setValue}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <FormField
             control={form.control}
-            name="name"
+            name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter name..." {...field} />
+                  <Textarea placeholder="Enter description...." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+          <div className="flex gap-6">
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Price</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Enter price..."
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="stock"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Stock</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Enter stock..."
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <FormField
             control={form.control}
-            name="categoryId"
-            render={({ field }) => (
-              <FormItem className="flex grow flex-col justify-between">
-                <FormLabel>Category</FormLabel>
-                <FormControl>
-                  <CategoryComboBox
-                    value={field.value}
-                    // @ts-ignore
-                    setValue={form.setValue}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea placeholder="Enter description...." {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="flex gap-6">
-          <FormField
-            control={form.control}
-            name="price"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Price</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="Enter price..."
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="stock"
+            name="imageUrl"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Stock</FormLabel>
+                <div className="flex items-center justify-between">
+                  <FormLabel>Image</FormLabel>
+                  <Button
+                    variant="outline"
+                    size="xs"
+                    type="button"
+                    onClick={() => getRandomImageUrl()}
+                    className="flex gap-1"
+                  >
+                    <Sparkles className="h-3 w-3" /> Get random image
+                  </Button>
+                </div>
                 <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="Enter stock..."
-                    {...field}
-                  />
+                  <FileInput setValue={form.setValue} value={field.value} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-        </div>
-        <FormField
-          control={form.control}
-          name="imageUrl"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center justify-between">
-                <FormLabel>Image</FormLabel>
-                <Button
-                  variant="outline"
-                  size="xs"
-                  type="button"
-                  onClick={() => getRandomImageUrl()}
-                  className="flex gap-1"
-                >
-                  <Sparkles className="h-3 w-3" /> Get random image
-                </Button>
-              </div>
-              <FormControl>
-                <FileInput setValue={form.setValue} value={field.value} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="flex justify-between">
-          {product && (
-            <Button
-              variant="destructive"
-              type="button"
-              onClick={async () => {
-                const res = await deleteProduct(product.id);
-                if (res.success) {
-                  toast.success(res.message);
-                  hide();
-                } else {
-                  toast.error(res.message);
-                }
-              }}
-            >
-              Delete
-            </Button>
-          )}
-          <Button className="ml-auto" type="submit">
-            {product ? 'Update' : 'Create'}
-          </Button>
-        </div>
-      </form>
+        </ModalContent>
+
+        <ModalFooter>
+          <div className="flex justify-between">
+            {product && (
+              <Button
+                variant="destructive"
+                type="button"
+                onClick={async () => {
+                  const res = await deleteProduct(product.id);
+                  if (res.success) {
+                    toast.success(res.message);
+                    hide();
+                  } else {
+                    toast.error(res.message);
+                  }
+                }}
+              >
+                Delete
+              </Button>
+            )}
+            {product && (
+              <Button className="ml-auto" type="submit" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Updating...
+                  </>
+                ) : (
+                  'Update'
+                )}
+              </Button>
+            )}
+            {!product && (
+              <Button className="ml-auto" type="submit" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  'Create'
+                )}
+              </Button>
+            )}
+          </div>
+        </ModalFooter>
+      </Modal>
     </Form>
   );
 };

@@ -1,12 +1,12 @@
-"use client";
-import React from "react";
-import { Button } from "./ui/button";
-import { useModal } from "./modal";
-import ProductModal from "./ProductModal";
+'use client';
+import React from 'react';
+import { Button } from './ui/button';
+import { useModal } from './modal';
+import ProductForm from './ProductForm';
 
 const CreateProductButton = () => {
   const { show } = useModal();
-  return <Button onClick={() => show(<ProductModal />)}>Create product</Button>;
+  return <Button onClick={() => show(<ProductForm />)}>Create product</Button>;
 };
 
 export default CreateProductButton;

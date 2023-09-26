@@ -13,16 +13,14 @@ import React, { useEffect, useState } from 'react';
 import CheckboxForm from './form/CheckboxForm';
 import { Prisma } from '@prisma/client';
 import { useModal } from './modal';
-import ProductModal from './ProductModal';
 import { Badge } from './ui/badge';
 import Image from 'next/image';
 import { getProducts } from '@/lib/actions';
-import { Button } from './ui/button';
-import { Loader2 } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
 import { useSearchParams } from 'next/navigation';
 import EmptyState from './EmptyState';
 import { PAGE_SIZE } from '@/lib/constants';
+import ProductForm from './ProductForm';
 
 interface ProductsTableProps {
   products: Prisma.ProductGetPayload<{
@@ -95,7 +93,7 @@ const ProductsTable = ({ products }: ProductsTableProps) => {
               <TableRow
                 key={product.id}
                 className="cursor-pointer"
-                onClick={() => show(<ProductModal product={product} />)}
+                onClick={() => show(<ProductForm product={product} />)}
               >
                 <TableCell className="w-[256px] max-w-[256px] overflow-hidden text-ellipsis font-medium">
                   {name}
