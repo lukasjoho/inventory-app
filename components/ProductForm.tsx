@@ -1,8 +1,8 @@
-"use client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import {
   Form,
   FormControl,
@@ -11,20 +11,22 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./ui/form";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { Textarea } from "./ui/textarea";
-import FileInput from "./FileInput";
-import { createProduct, deleteProduct, updateProduct } from "@/lib/actions";
-import toast from "react-hot-toast";
-import { Prisma } from "@prisma/client";
-import { useModal } from "./modal";
-import { CategoryComboBox } from "./CategoryComboBox";
+} from './ui/form';
+import { Input } from './ui/input';
+import { Button } from './ui/button';
+import { Textarea } from './ui/textarea';
+import FileInput from './form/FileInput';
+import { createProduct, deleteProduct, updateProduct } from '@/lib/actions';
+import toast from 'react-hot-toast';
+import { Prisma } from '@prisma/client';
+import { useModal } from './modal';
+import { CategoryComboBox } from './form/CategoryComboBox';
+import { faker } from '@faker-js/faker';
+import { Loader2, Sparkles } from 'lucide-react';
 
 const formSchema = z.object({
   name: z.string(),
-  description: z.string(),
+  description: z.string().optional(),
   price: z.coerce.number(),
   stock: z.coerce.number(),
   isDeal: z.boolean(),
@@ -43,13 +45,13 @@ const ProductForm = ({ product }: ProductFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: name ?? "",
-      description: description ?? "",
+      name: name ?? undefined,
+      description: description ?? undefined,
       price: price ?? 0,
       stock: stock ?? 0,
       isDeal: isDeal ?? false,
-      imageUrl: imageUrl ?? "",
-      categoryId: categoryId ?? "",
+      imageUrl: imageUrl ?? undefined,
+      categoryId: categoryId ?? undefined,
     },
   });
 
@@ -57,7 +59,9 @@ const ProductForm = ({ product }: ProductFormProps) => {
     const nullifiedValues: any = {};
     Object.keys(values).forEach((key) => {
       // @ts-ignore
-      nullifiedValues[key] = values[key] === "" ? null : values[key];
+      nullifiedValues[key] =
+        // @ts-ignore
+        values[key] === '' || !values[key] === undefined ? null : values[key];
     });
     let res;
     if (product) {
@@ -72,39 +76,48 @@ const ProductForm = ({ product }: ProductFormProps) => {
     }
     hide();
   }
+
+  const getRandomImageUrl = () => {
+    const randomImageUrl = faker.image.urlLoremFlickr({ category: 'product' });
+
+    form.setValue('imageUrl', randomImageUrl);
+    return;
+  };
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter name..." {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="categoryId"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Category</FormLabel>
-              <FormControl>
-                <CategoryComboBox
-                  value={field.value}
-                  // @ts-ignore
-                  setValue={form.setValue}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="flex gap-6">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter name..." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="categoryId"
+            render={({ field }) => (
+              <FormItem className="flex grow flex-col justify-between">
+                <FormLabel>Category</FormLabel>
+                <FormControl>
+                  <CategoryComboBox
+                    value={field.value}
+                    // @ts-ignore
+                    setValue={form.setValue}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         <FormField
           control={form.control}
           name="description"
@@ -159,7 +172,18 @@ const ProductForm = ({ product }: ProductFormProps) => {
           name="imageUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Image</FormLabel>
+              <div className="flex items-center justify-between">
+                <FormLabel>Image</FormLabel>
+                <Button
+                  variant="outline"
+                  size="xs"
+                  type="button"
+                  onClick={() => getRandomImageUrl()}
+                  className="flex gap-1"
+                >
+                  <Sparkles className="h-3 w-3" /> Get random image
+                </Button>
+              </div>
               <FormControl>
                 <FileInput setValue={form.setValue} value={field.value} />
               </FormControl>
@@ -173,14 +197,21 @@ const ProductForm = ({ product }: ProductFormProps) => {
               variant="destructive"
               type="button"
               onClick={async () => {
-                await deleteProduct(product.id);
-                hide();
+                const res = await deleteProduct(product.id);
+                if (res.success) {
+                  toast.success(res.message);
+                  hide();
+                } else {
+                  toast.error(res.message);
+                }
               }}
             >
               Delete
             </Button>
           )}
-          <Button type="submit">{product ? "Update" : "Create"}</Button>
+          <Button className="ml-auto" type="submit">
+            {product ? 'Update' : 'Create'}
+          </Button>
         </div>
       </form>
     </Form>

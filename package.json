@@ -30,11 +30,13 @@
     "react-dom": "latest",
     "react-hook-form": "^7.46.2",
     "react-hot-toast": "^2.4.1",
+    "react-intersection-observer": "^9.5.2",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.2"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.1.0",
     "@types/lodash.debounce": "^4.0.7",
     "@types/node": "latest",
     "@types/react": "latest",

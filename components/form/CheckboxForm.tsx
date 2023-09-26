@@ -1,8 +1,8 @@
-import React from "react";
-import { Checkbox } from "./ui/checkbox";
-import { CheckboxProps } from "@radix-ui/react-checkbox";
-import { updateIsDeal } from "@/lib/actions";
-import toast from "react-hot-toast";
+import React from 'react';
+import { Checkbox } from '../ui/checkbox';
+import { CheckboxProps } from '@radix-ui/react-checkbox';
+import { updateIsDeal } from '@/lib/actions';
+import toast from 'react-hot-toast';
 
 interface CheckboxFormProps extends CheckboxProps {
   id: string;

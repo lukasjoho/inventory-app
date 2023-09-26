@@ -12,9 +12,9 @@ datasource db {
 
 model Product {
   id        String     @default(cuid()) @id
-  name     String      @unique
+  name      String
   description String?
-  price     Int
+  price     Int        
   stock     Int        @default(0)
   category  Category?  @relation(fields: [categoryId], references: [id])
   categoryId String?
@@ -26,7 +26,7 @@ model Product {
 
 model Category {
   id        String     @default(cuid()) @id
-  name      String
+  name      String     @unique
   products  Product[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt

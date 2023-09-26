@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import { Check, ChevronsUpDown, PlusCircle } from "lucide-react";
+import { Check, ChevronsUpDown, PlusCircle } from 'lucide-react';
 
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-} from "@/components/ui/command";
+} from '@/components/ui/command';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { getCategories } from "@/lib/actions";
-import { useEffect, useState } from "react";
-import { Prisma } from "@prisma/client";
+} from '@/components/ui/popover';
+import { getCategories } from '@/lib/actions';
+import { useEffect, useState } from 'react';
+import { Prisma } from '@prisma/client';
 
 const useCategories = () => {
   const [categories, setCategories] = useState<Prisma.CategoryGetPayload<{}>[]>(
@@ -46,7 +46,7 @@ export function CategoryComboBox({ value, setValue }: CategoryComboBoxProps) {
   //   const [value, setValue] = useState("");
   const categories = useCategories();
 
-  const [currentInputValue, setCurrentInputValue] = useState("");
+  const [currentInputValue, setCurrentInputValue] = useState('');
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -56,13 +56,13 @@ export function CategoryComboBox({ value, setValue }: CategoryComboBoxProps) {
           role="combobox"
           aria-expanded={open}
           className={cn(
-            "min-w-[160px] justify-between font-normal",
-            !value && "text-muted-foreground"
+            'w-full min-w-[160px] justify-between font-normal',
+            !value && 'text-muted-foreground'
           )}
         >
           {value
             ? categories.find((c) => c.id === value)?.name
-            : "Select category..."}
+            : 'Select category...'}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -82,14 +82,15 @@ export function CategoryComboBox({ value, setValue }: CategoryComboBoxProps) {
               <CommandItem
                 key={c.id}
                 onSelect={(currentValue) => {
-                  setValue("categoryId", c.id);
+                  setValue('categoryId', c.id);
                   setOpen(false);
                 }}
+                className="cursor-pointer"
               >
                 <Check
                   className={cn(
-                    "mr-2 h-4 w-4",
-                    value === c.id ? "opacity-100" : "opacity-0"
+                    'mr-2 h-4 w-4',
+                    value === c.id ? 'opacity-100' : 'opacity-0'
                   )}
                 />
                 {c.name}

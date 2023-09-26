@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import {
   Table,
   TableBody,
@@ -6,17 +6,23 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { prisma } from "@/lib/prisma";
+} from '@/components/ui/table';
+import { useInView } from 'react-intersection-observer';
 
-import React from "react";
-import { Checkbox } from "./ui/checkbox";
-import CheckboxForm from "./CheckboxForm";
-import { Prisma } from "@prisma/client";
-import { useModal } from "./modal";
-import ProductModal from "./ProductModal";
-import { Badge } from "./ui/badge";
-import Image from "next/image";
+import React, { useEffect, useState } from 'react';
+import CheckboxForm from './form/CheckboxForm';
+import { Prisma } from '@prisma/client';
+import { useModal } from './modal';
+import ProductModal from './ProductModal';
+import { Badge } from './ui/badge';
+import Image from 'next/image';
+import { getProducts } from '@/lib/actions';
+import { Button } from './ui/button';
+import { Loader2 } from 'lucide-react';
+import { Skeleton } from './ui/skeleton';
+import { useSearchParams } from 'next/navigation';
+import EmptyState from './EmptyState';
+import { PAGE_SIZE } from '@/lib/constants';
 
 interface ProductsTableProps {
   products: Prisma.ProductGetPayload<{
@@ -27,15 +33,46 @@ interface ProductsTableProps {
 }
 
 const ProductsTable = ({ products }: ProductsTableProps) => {
+  const searchParams = useSearchParams();
+  const search = searchParams.get('search') ?? '';
   const { show } = useModal();
+  const [renderedProducts, setRenderedProducts] = useState(products);
+  const [isEnd, setIsEnd] = useState(false);
+  const [page, setPage] = useState(1);
+  const fetchMoreProducts = async () => {
+    const nextPage = page + 1;
+    const moreProducts = await getProducts({
+      search,
+      skip: page * PAGE_SIZE,
+      take: PAGE_SIZE,
+    });
+    setRenderedProducts([...renderedProducts, ...moreProducts]);
+    if (moreProducts.length < PAGE_SIZE) {
+      setIsEnd(true);
+      return;
+    }
+    setPage(nextPage);
+  };
+
+  const { ref, inView, entry } = useInView({
+    /* Optional options */
+    threshold: 0,
+    rootMargin: '0px 0px 100px 0px',
+  });
+
+  useEffect(() => {
+    fetchMoreProducts();
+  }, [inView]);
   return (
-    <div className="border rounded-lg whitespace-nowrap">
+    <div className="whitespace-nowrap rounded-lg border">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
+            <TableHead className="w-[256px] max-w-[256px]">Name</TableHead>
             <TableHead>Image</TableHead>
-            <TableHead>Description</TableHead>
+            <TableHead className="w-[256px] max-w-[256px]">
+              Description
+            </TableHead>
             <TableHead>Category</TableHead>
             <TableHead className="w-[128px] text-right">Stock</TableHead>
             <TableHead className="w-[128px] text-right">Price</TableHead>
@@ -43,7 +80,7 @@ const ProductsTable = ({ products }: ProductsTableProps) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {products.map((product) => {
+          {renderedProducts.map((product) => {
             const {
               id,
               name,
@@ -60,22 +97,26 @@ const ProductsTable = ({ products }: ProductsTableProps) => {
                 className="cursor-pointer"
                 onClick={() => show(<ProductModal product={product} />)}
               >
-                <TableCell className="font-medium">{name}</TableCell>
+                <TableCell className="w-[256px] max-w-[256px] overflow-hidden text-ellipsis font-medium">
+                  {name}
+                </TableCell>
                 <TableCell className="font-medium">
-                  <div className="w-12 h-12 aspect-square overflow-hidden relative grid place-items-center">
+                  <div className="relative grid aspect-square h-12 w-12 place-items-center overflow-hidden">
                     {imageUrl ? (
-                      <Image src={imageUrl} alt="" fill objectFit="cover" />
+                      <Image src={imageUrl} alt="" fill objectFit="contain" />
                     ) : (
-                      "-"
+                      '-'
                     )}
                   </div>
                 </TableCell>
-                <TableCell>{description ?? "-"}</TableCell>
+                <TableCell className="w-[256px] max-w-[256px] overflow-hidden text-ellipsis">
+                  {description ?? '-'}
+                </TableCell>
                 <TableCell>
                   {category ? (
                     <Badge variant="outline">{category?.name}</Badge>
                   ) : (
-                    "-"
+                    '-'
                   )}
                 </TableCell>
                 <TableCell className="text-right">{stock}</TableCell>
@@ -88,18 +129,15 @@ const ProductsTable = ({ products }: ProductsTableProps) => {
           })}
         </TableBody>
       </Table>
-      {products.length === 0 && (
-        <div className="w-full flex flex-col items-center gap-2 py-8">
-          <h2 className="text-center text-sm">
-            No products available for given search query.
-          </h2>
-          <img
-            className="w-[300px]"
-            src="https://media0.giphy.com/media/2vs70gBAfQXvOOYsBI/giphy.gif"
-            alt=""
-          />
+      {!isEnd && (
+        <div ref={ref} className="flex w-full flex-col gap-4 p-4">
+          <Skeleton className="h-[80px] w-full rounded-md" />
+          <Skeleton className="h-[80px] w-full rounded-md" />
+          <Skeleton className="h-[80px] w-full rounded-md" />
         </div>
       )}
+
+      {renderedProducts.length === 0 && <EmptyState />}
     </div>
   );
 };
