@@ -1,9 +1,9 @@
-"use client";
-import React, { useCallback } from "react";
-import { Input } from "./ui/input";
-import { Search } from "lucide-react";
-import debounce from "lodash.debounce";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+'use client';
+import React, { useCallback } from 'react';
+import { Input } from './ui/input';
+import { Search } from 'lucide-react';
+import debounce from 'lodash.debounce';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 const SearchInput = () => {
   const router = useRouter();
@@ -13,7 +13,7 @@ const SearchInput = () => {
   const createQueryString = useCallback(
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams);
-      if (value === "" || value === undefined) {
+      if (value === '' || value === undefined) {
         params.delete(name);
         return params.toString();
       }
@@ -24,8 +24,7 @@ const SearchInput = () => {
   );
   const handleChange = useCallback(
     debounce((e: React.ChangeEvent<HTMLInputElement>) => {
-      console.log("QUERY STRING", createQueryString("search", e.target.value));
-      router.push(pathname + "?" + createQueryString("search", e.target.value));
+      router.push(pathname + '?' + createQueryString('search', e.target.value));
     }, 150),
     []
   );
