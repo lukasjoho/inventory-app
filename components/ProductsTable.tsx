@@ -127,7 +127,7 @@ const ProductsTable = ({ products }: ProductsTableProps) => {
           })}
         </TableBody>
       </Table>
-      {!isEnd && renderedProducts.length >= 25 && (
+      {!isEnd && renderedProducts.length >= PAGE_SIZE && (
         <div ref={ref} className="flex w-full flex-col gap-4 p-4">
           <Skeleton className="h-[80px] w-full rounded-md" />
           <Skeleton className="h-[80px] w-full rounded-md" />
