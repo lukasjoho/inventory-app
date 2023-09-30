@@ -1,6 +1,4 @@
-import CreateProductButton from '@/components/CreateProductButton';
 import Header from '@/components/Header';
-import SearchInput from '@/components/SearchInput';
 import Container from '@/components/layout/Container';
 import { Skeleton } from '@/components/ui/skeleton';
 import React from 'react';
